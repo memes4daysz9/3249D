@@ -1,14 +1,35 @@
 #include "main.h"
 
+void Debug(){ // WIP, should return to SD card to debug the VEX control is Vex wants to screw with my auton
+
+}
+const int LowestBatt = 30;//base number, could be different could be different with each robot though
 void disabled() {
+	if (pros::battery::get_capacity() <= LowestBatt){ //FILL SCREEN with Pen color
 
+		pros::screen::set_pen(0xff0000); //red, CHANGE BATTERY NOW
 
+	}else if (pros::battery::get_capacity() <= (LowestBatt * 2)){
+
+		pros::screen::set_pen(0xffff00); //yellow, May wanna change
+
+	}else{
+
+		pros::screen::set_pen(0x00ff00); //green, Batteries Okay
+	}
+	
+
+	while (true){
+		pros::screen::print(pros::E_TEXT_SMALL, 1, "Battery Percentage",);
+	}
 
 } //Log pre match data
 
 void competition_initialize() {}
 
-void autonomous() {}
+void autonomous() {
+	pros::Task Odom(Odometry);
+}
 
 void opcontrol() {
 	//pros::Task Odom(Odometry);
@@ -48,7 +69,7 @@ void opcontrol() {
 
 											/*			Acceleration Curve			*/
 
-											
+
 		Change = dir - lastdir;
 		if(abs(Change) > MaxChange){
 			dir = (Change + (dir/2));
