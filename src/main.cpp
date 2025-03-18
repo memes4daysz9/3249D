@@ -8,19 +8,37 @@ void disabled() {
 	if (pros::battery::get_capacity() <= LowestBatt){ //FILL SCREEN with Pen color
 
 		pros::screen::set_pen(0xff0000); //red, CHANGE BATTERY NOW
+		pros::screen::fill_rect(0,0,480,400);
+		pros::screen::set_pen(0xffffff);
+		pros::screen::print(pros::E_TEXT_SMALL, 1, "WARNING! BATTERY LOW	Battery Percentage: ",pros::battery::get_capacity());
+		SpeedReduction = 2;
+
 
 	}else if (pros::battery::get_capacity() <= (LowestBatt * 2)){
 
 		pros::screen::set_pen(0xffff00); //yellow, May wanna change
+		pros::screen::fill_rect(0,0,480,400);
+		pros::screen::set_pen(0xffffff);
+		pros::screen::print(pros::E_TEXT_SMALL, 1, "Take Caution last round	Battery Percentage: ",pros::battery::get_capacity());
+		SpeedReduction = 1;
 
 	}else{
-
+		
 		pros::screen::set_pen(0x00ff00); //green, Batteries Okay
+		pros::screen::fill_rect(0,0,480,400);
+		pros::screen::set_pen(0xffffff);
+		pros::screen::print(pros::E_TEXT_SMALL, 1, "Battery OK. Battery Percentage: ",pros::battery::get_capacity());
+		SpeedReduction = 0;
 	}
 	
 
 	while (true){
-		pros::screen::print(pros::E_TEXT_SMALL, 1, "Battery Percentage",);
+		if (SpeedReduction > 0){
+			pros::delay(500);
+		}else {
+			pros::screen::print(pros::E_TEXT_SMALL, 1, "Battery OK. Battery Percentage: ",pros::battery::get_capacity());
+			//pros::screen::print(pros::E_TEXT_SMALL, 2, "Controller Battery",pros::battery::get_capacity());
+		}
 	}
 
 } //Log pre match data

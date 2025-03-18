@@ -35,9 +35,9 @@ extern double DHeading;
 extern void MoveAllMotors(float Voltage);
 extern void MoveXMotorsF(float Voltage);
 
-extern double kP;
-extern double kI;
-extern double kD;
+extern const double kP;
+extern const double kI;
+extern const double kD;
 
 
 /*              Pure Pursuit                */
@@ -45,3 +45,7 @@ extern double kD;
 extern const int PathLimit;
 extern int CurrLine;
 extern float Paths[][2];
+
+/*              Battery Saving Functions                */
+
+extern int8_t SpeedReduction;

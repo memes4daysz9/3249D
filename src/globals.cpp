@@ -11,20 +11,20 @@ extern std::int8_t BRP = 6;
 
 /*              Tracking                */
 
-extern int RDeg;
-extern int LDeg; // Tracks the Degree from the motors
+extern int RDeg = 0;
+extern int LDeg = 0; // Tracks the Degree from the motors
 
-extern double X;
-extern double Y; // Local X , Y
+extern double X = 0;
+extern double Y = 0; // Local X , Y
 
 extern constexpr double diameter = 3.25;
 extern constexpr double radius = 3.25/2;
 extern constexpr double TrackLength = 8;
 extern constexpr double Tolerance = 10;
-extern double DHeading; // Heading in Degrees
-extern double kP = 10;
-extern double kI = 0.7;
-extern double kD = 3;
+extern double DHeading = 0; // Heading in Degrees
+extern const double kP = 10;
+extern const double kI = 0.7;
+extern const double kD = 3;
 
 extern double InchesToDegrees(float distance){return distance/((M_PI * diameter)/360);}
 
@@ -39,3 +39,7 @@ extern double RadToDeg(double x) {
 }
 
 extern int sgn(double x){return (x>0) - (x<0);}
+
+/*              Battery Saving Functions                */
+
+extern int8_t SpeedReduction = 0;
