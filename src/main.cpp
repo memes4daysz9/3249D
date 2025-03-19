@@ -30,30 +30,8 @@ void opcontrol() {
 
 
 	while (true) {
-										/*				Basic Movement				*/
-
-
-		dir = Cont.get_analog(ANALOG_LEFT_Y);
-		rot = Cont.get_analog(ANALOG_RIGHT_X);
-
-		left = dir + rot;
-		right = dir - rot;
-
-		LeftMG.move_voltage((120 * (100 * ((((1 - curve) * left) / 100 + (curve * pow(left / 100 , 7)))))));
-		RightMG.move_voltage((120 * (100 * ((((1 - curve) * left) / 100 + (curve * pow(left / 100 , 7)))))));//input control curves go hard ngl
-
-		// if the change in controller Direction is too much, then slow down the deaccel to keep the robot from tipping / breaking components
-		pros::delay(20);
-
-
-											/*			Acceleration Curve			*/
-
-											
-		Change = dir - lastdir;
-		if(abs(Change) > MaxChange){
-			dir = (Change + (dir/2));
-		}
-		lastdir = dir;
-
+		pros::delay(1000);
+		pros::screen::print(pros::E_TEXT_SMALL,1,"Left Side Motor temps: %3d, %3d, %3d", LeftMG.get_temperature(0),LeftMG.get_temperature(1),LeftMG.get_temperature(2));
+		pros::screen::print(pros::E_TEXT_SMALL,1,"Right Side Motor temps: %3d, %3d, %3d", RightMG.get_temperature(0),RightMG.get_temperature(1),RightMG.get_temperature(2));
 	}
 }
