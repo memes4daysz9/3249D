@@ -1,6 +1,8 @@
 #include "main.h"
 
 void initialize() {
+	pros::Controller Cont(pros::E_CONTROLLER_MASTER);
+
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello PROS User!");
 
@@ -14,5 +16,6 @@ void initialize() {
 
     pros::MotorGroup LeftMG ({FLP,MLP,BLP},pros::MotorGears::blue,pros::v5::MotorUnits::degrees);
     pros::MotorGroup RightMG ({FRP,MRP,BRP},pros::MotorGears::blue,pros::v5::MotorUnits::degrees);
-
+	
+	ControllerBatt = Cont.get_battery_level();
 }

@@ -11,6 +11,8 @@ extern std::int8_t BRP = 6;
 
 /*              Tracking                */
 
+extern int8_t ControllerBatt = 0;
+
 extern int RDeg = 0;
 extern int LDeg = 0; // Tracks the Degree from the motors
 
@@ -20,7 +22,7 @@ extern double Y = 0; // Local X , Y
 extern constexpr double diameter = 3.25;
 extern constexpr double radius = 3.25/2;
 extern constexpr double TrackLength = 8;
-extern constexpr double Tolerance = 10;
+extern constexpr double Tolerance = 0.1; // 0.1 inches and 0.1 degrees
 extern double DHeading = 0; // Heading in Degrees
 extern const double kP = 10;
 extern const double kI = 0.7;

@@ -30,6 +30,8 @@ extern const double Tolerance;
 extern const double radius;
 extern double DHeading;
 
+extern int8_t ControllerBatt;
+
 /*              Autonomus               */
 
 extern void MoveAllMotors(float Voltage);
