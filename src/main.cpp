@@ -109,7 +109,8 @@ void opcontrol() {
 	//uncomment for testing
 
 	float dir;
-	float rot;
+	float Lrot;
+	float Rrot;
  	float left;
  	float right;
  	float curve;
@@ -117,10 +118,9 @@ void opcontrol() {
 	float MaxChange;
 	float ChangeDir;
 	float Change;
-	float eLeft; // Extra FROM the left going TO the right
-	float eRight; 
-	float pLeft;
-	float pRight;
+	float ContX;
+	float ContY;
+
 
 	pros::Controller Cont(pros::E_CONTROLLER_MASTER);
 	pros::MotorGroup LeftMG({FLP, MLP, BLP});
@@ -128,37 +128,28 @@ void opcontrol() {
 
 
 	while (true) {
-										/*				Basic Movement				*/
 
+														/*			Drivetrain			*/
 
-		dir = Cont.get_analog(ANALOG_LEFT_Y);
-		rot = Cont.get_analog(ANALOG_RIGHT_X);
-		
-		pLeft = dir + rot;
-		pRight = dir - rot;
+		ContX = Cont.get_analog(ANALOG_RIGHT_X);
+		ContY = Cont.get_analog(ANALOG_LEFT_Y);
 
-											/*			Intermediate Movement		*/
-		//allows for better turning i think?
-		if (pLeft > 100){
-			right = pRight - (pLeft - 100);
-		}else if (pLeft < -100){
-			right = pRight + (pLeft + 100);
-		}
+		dir = ContY;
 
-		if (pRight > 100 ){
-			left = pLeft - (pLeft - 100);
-		}else if (pRight < 100){
-			left = pLeft + (pLeft + 100);
-		}
-											/*			Advanced Movement			*/
+		Lrot = abs(ContX * (ContX > 0)) * (TurnFactor); // if its greater than 0, then the left can add a certain amount and reduce it by a factor. abs isnt needed in this area, just makes it look right
+		Rrot = abs(ContX * (ContX < 0)) * (TurnFactor);// does the negative values of controller Left X
+
+		left = dir + Lrot;
+		right = dir + Rrot;
+
 
 		LeftMG.move_voltage((120 * (100 * ((((1 - curve) * left) / 100 + (curve * pow(left / 100 , 7)))))));
 		RightMG.move_voltage((120 * (100 * ((((1 - curve) * left) / 100 + (curve * pow(left / 100 , 7)))))));//input control curves go hard ngl
 
 		
 											/*			Battery Optimizing			*/
-
-		pros::delay(250 * SpeedReduction);
+										
+		pros::delay(150 * SpeedReduction);
 		// High = 0 , Middle = 250 , Low = 500
 
 											/*			Acceleration Curve			*/

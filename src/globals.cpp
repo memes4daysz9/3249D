@@ -45,3 +45,6 @@ extern int sgn(double x){return (x>0) - (x<0);}
 /*              Battery Saving Functions                */
 
 extern int8_t SpeedReduction = 0;
+
+/*              Drivetrain          */
+extern float TurnFactor = 0.75;

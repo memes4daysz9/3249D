@@ -51,3 +51,6 @@ extern float Paths[][2];
 /*              Battery Saving Functions                */
 
 extern int8_t SpeedReduction;
+
+/*              Drivetrain          */
+extern float TurnFactor;
