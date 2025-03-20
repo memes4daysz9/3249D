@@ -5,6 +5,7 @@ void Debug(){ // WIP, should return to SD card to debug the VEX control is Vex w
 }
 const int LowestBatt = 30;//base number, could be different could be different with each robot though
 void disabled() {
+	pros::screen::print(pros::E_TEXT_SMALL, 3, "											");
 	if (pros::battery::get_capacity() <= LowestBatt){ //FILL SCREEN with Pen color
 
 		pros::screen::set_pen(0xff0000); //red, CHANGE BATTERY NOW
@@ -39,11 +40,16 @@ void disabled() {
 			pros::screen::print(pros::E_TEXT_SMALL, 1, "Battery OK. Battery Percentage: ",pros::battery::get_capacity());
 			pros::screen::print(pros::E_TEXT_SMALL, 2, "Controller Battery",ControllerBatt);
 		}
-	}
+	}	
+	pros::screen::print(pros::E_TEXT_SMALL, 3, "Leaving Disabled Period!");
+	
 
 } //Log pre match data
 
-void competition_initialize() {}
+void competition_initialize() {
+	pros::screen::print(pros::E_TEXT_SMALL, 3, "											");
+	pros::screen::print(pros::E_TEXT_SMALL, 3, "Went Through Competition Initialize Period!");
+}
 
 									/*			Auton Defining			*/
 
@@ -66,6 +72,7 @@ bool Move(float dis){ /*			Forward			*/
 		RightMG.move_voltage((error * kP)+ i + ((error - LError) * kD));
 		pros::delay(10 * SpeedReduction);
 		LError = error;
+		
 	}
 	return true;
 }
@@ -92,6 +99,8 @@ bool Rotate(float deg){ /*			Rotation			*/
 
 
 void autonomous() {
+	pros::screen::print(pros::E_TEXT_SMALL, 3, "											");
+	pros::screen::print(pros::E_TEXT_SMALL, 3, "Entering Autonomus Period");
 	pros::Task Odom(Odometry);
 }
 
@@ -124,9 +133,10 @@ void opcontrol() {
 
 		dir = Cont.get_analog(ANALOG_LEFT_Y);
 		rot = Cont.get_analog(ANALOG_RIGHT_X);
-
+		
 		pLeft = dir + rot;
 		pRight = dir - rot;
+
 											/*			Intermediate Movement		*/
 		//allows for better turning i think?
 		if (pLeft > 100){
