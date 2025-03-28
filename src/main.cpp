@@ -132,28 +132,15 @@ void opcontrol() {
 
 
 		dir = Cont.get_analog(ANALOG_LEFT_Y);
-		rot = Cont.get_analog(ANALOG_RIGHT_X);
+		rot = Cont.get_analog(ANALOG_RIGHT_X) * 0.75;
 		
-		pLeft = dir + rot;
-		pRight = dir - rot;
+		left = dir + rot;
+		right = dir - rot;
 
-											/*			Intermediate Movement		*/
-		//allows for better turning i think?
-		if (pLeft > 100){
-			right = pRight - (pLeft - 100);
-		}else if (pLeft < -100){
-			right = pRight + (pLeft + 100);
-		}
-
-		if (pRight > 100 ){
-			left = pLeft - (pLeft - 100);
-		}else if (pRight < 100){
-			left = pLeft + (pLeft + 100);
-		}
 											/*			Advanced Movement			*/
 
-		LeftMG.move_voltage((120 * (100 * ((((1 - curve) * left) / 100 + (curve * pow(left / 100 , 7)))))));
-		RightMG.move_voltage((120 * (100 * ((((1 - curve) * left) / 100 + (curve * pow(left / 100 , 7)))))));//input control curves go hard ngl
+		LeftMG.move(((100 * ((((1 - curve) * left) / 100 + (curve * pow(left / 100 , 7)))))));
+		RightMG.move((100 * ((((1 - curve) * right) / 100 + (curve * pow(right / 100 , 7))))));//input control curves go hard ngl
 
 		
 											/*			Battery Optimizing			*/

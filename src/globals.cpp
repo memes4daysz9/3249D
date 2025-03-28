@@ -2,11 +2,11 @@
 
 /*                  Motor Config                */
 
-extern std::int8_t FLP = 1;
+extern std::int8_t FLP = -1;
 extern std::int8_t FRP = 2;
-extern std::int8_t MLP = 3;
+extern std::int8_t MLP = -3;
 extern std::int8_t MRP = 4; //unsigned 8 bit integer
-extern std::int8_t BLP = 5; //for ports
+extern std::int8_t BLP = -5; //for ports
 extern std::int8_t BRP = 6;
 
 /*              Tracking                */
