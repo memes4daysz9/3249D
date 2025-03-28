@@ -136,15 +136,15 @@ void opcontrol() {
 
 		dir = ContY;
 
-		Lrot = abs(ContX * (ContX > 0)) * (TurnFactor); // if its greater than 0, then the left can add a certain amount and reduce it by a factor. abs isnt needed in this area, just makes it look right
-		Rrot = abs(ContX * (ContX < 0)) * (TurnFactor);// does the negative values of controller Left X
+		Lrot = abs(ContX * (ContX > 0)) * (TurnFactor) + ((ContY == 0) * ContX); // if its greater than 0, then the left can add a certain amount and reduce it by a factor. abs isnt needed in this area, just makes it look right
+		Rrot = abs(ContX * (ContX < 0)) * (TurnFactor) + ((ContY == 0) * ContX);// does the negative values of controller Left X
 
 		left = dir + Lrot;
 		right = dir + Rrot;
 
 
 		LeftMG.move_voltage((120 * (100 * ((((1 - curve) * left) / 100 + (curve * pow(left / 100 , 7)))))));
-		RightMG.move_voltage((120 * (100 * ((((1 - curve) * left) / 100 + (curve * pow(left / 100 , 7)))))));//input control curves go hard ngl
+		RightMG.move_voltage((120 * (100 * ((((1 - curve) * right) / 100 + (curve * pow(right / 100 , 7)))))));//input control curves go hard ngl
 
 		
 											/*			Battery Optimizing			*/
