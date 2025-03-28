@@ -112,7 +112,7 @@ void opcontrol() {
 	float rot;
  	float left;
  	float right;
- 	float curve;
+ 	const float curve = 0.785;
 	float lastdir;
 	float MaxChange;
 	float ChangeDir;
@@ -121,6 +121,8 @@ void opcontrol() {
 	float eRight; 
 	float pLeft;
 	float pRight;
+	const float DTModifier = 0.85;
+	bool FullPower; //Overrides the acceleration control and the DT Modifier
 
 	pros::Controller Cont(pros::E_CONTROLLER_MASTER);
 	pros::MotorGroup LeftMG({FLP, MLP, BLP});
@@ -128,27 +130,8 @@ void opcontrol() {
 
 
 	while (true) {
-										/*				Basic Movement				*/
-
-
-		dir = Cont.get_analog(ANALOG_LEFT_Y);
-		rot = Cont.get_analog(ANALOG_RIGHT_X) * 0.75;
-		
-		left = dir + rot;
-		right = dir - rot;
-
-											/*			Advanced Movement			*/
-
-		LeftMG.move(((100 * ((((1 - curve) * left) / 100 + (curve * pow(left / 100 , 7)))))));
-		RightMG.move((100 * ((((1 - curve) * right) / 100 + (curve * pow(right / 100 , 7))))));//input control curves go hard ngl
-
-		
-											/*			Battery Optimizing			*/
-
-		pros::delay(250 * SpeedReduction);
-		// High = 0 , Middle = 250 , Low = 500
-
-											/*			Acceleration Curve			*/
+										/*				Drivetrain Movement				*/
+													/*			Acceleration Curve			*/
 
 		// if the change in controller Direction is too much, then slow down the deaccel to keep the robot from tipping / breaking components
 
@@ -156,7 +139,27 @@ void opcontrol() {
 		if(abs(Change) > MaxChange){
 			dir = (Change + (dir/2));
 		}
-		lastdir = dir;
+
+
+		FullPower = Cont.get_digital(DIGITAL_A);
+
+		dir = Cont.get_analog(ANALOG_LEFT_Y) * (DTModifier * FullPower); // keeps the robot straight if there is inconsistantcies with the friction
+		rot = (Cont.get_analog(ANALOG_RIGHT_X) * (0.75  * FullPower)) * (DTModifier * FullPower); // turning is already fast enough
+		
+		left = dir + rot;
+		right = dir - rot;
+
+
+		LeftMG.move((100 * ((((1 - curve) * left) / 100 + (curve * pow(left / 100 , 7))))));
+		RightMG.move((100 * ((((1 - curve) * right) / 100 + (curve * pow(right / 100 , 7))))));//input control curves go hard ngl
+
+		
+											/*			Battery Optimizing			*/
+		lastdir = dir; // trust me bro
+		pros::delay(250 * SpeedReduction);
+		// High = 0 , Middle = 250 , Low = 500
+
+
 		
 
 	}
