@@ -3,9 +3,9 @@
 void Debug(){ // WIP, should return to SD card to debug the VEX control is Vex wants to screw with my auton
 
 }
-const int LowestBatt = 30;//base number, could be different could be different with each robot though
-void disabled() {
-	pros::screen::print(pros::E_TEXT_SMALL, 3, "											");
+const int LowestBatt = 10;//base number, could be different could be different with each robot though
+
+void BatteryChecker(){
 	if (pros::battery::get_capacity() <= LowestBatt){ //FILL SCREEN with Pen color
 
 		pros::screen::set_pen(0xff0000); //red, CHANGE BATTERY NOW
@@ -25,22 +25,18 @@ void disabled() {
 
 	}else{
 		
-		pros::screen::set_pen(0x00ff00); //green, Batteries Okay
+		pros::screen::set_pen(0x00ee00); //green, Batteries Okay
 		pros::screen::fill_rect(0,0,480,400);
 		pros::screen::set_pen(0xffffff);
 		pros::screen::print(pros::E_TEXT_SMALL, 1, "Battery: Nah, I'd win Battery Percentage: ",pros::battery::get_capacity());
 		SpeedReduction = 0;
 	}
-	
+}
 
-	while (true){
-		if (SpeedReduction > 0){
-			pros::delay(500 * SpeedReduction);
-		}else {
-			pros::screen::print(pros::E_TEXT_SMALL, 1, "Battery OK. Battery Percentage: ",pros::battery::get_capacity());
-			pros::screen::print(pros::E_TEXT_SMALL, 2, "Controller Battery",ControllerBatt);
-		}
-	}	
+void disabled() {
+	pros::screen::print(pros::E_TEXT_SMALL, 3, "											");
+	BatteryChecker();
+	
 	pros::screen::print(pros::E_TEXT_SMALL, 3, "Leaving Disabled Period!");
 	
 
@@ -105,7 +101,8 @@ void autonomous() {
 }
 
 void opcontrol() {
-	//pros::Task Odom(Odometry);
+	pros::Task Odom(Odometry);
+	BatteryChecker();
 	//uncomment for testing
 
 	float dir;
@@ -121,7 +118,7 @@ void opcontrol() {
 	float eRight; 
 	float pLeft;
 	float pRight;
-	const float DTModifier = 0.85;
+	const float TModifier = 0.9; // turning modifier
 	bool FullPower; //Overrides the acceleration control and the DT Modifier
 
 	pros::Controller Cont(pros::E_CONTROLLER_MASTER);
@@ -131,20 +128,11 @@ void opcontrol() {
 
 	while (true) {
 										/*				Drivetrain Movement				*/
-													/*			Acceleration Curve			*/
-
-		// if the change in controller Direction is too much, then slow down the deaccel to keep the robot from tipping / breaking components
-
-		Change = dir - lastdir;
-		if(abs(Change) > MaxChange){
-			dir = (Change + (dir/2));
-		}
 
 
-		FullPower = Cont.get_digital(DIGITAL_A);
-
-		dir = Cont.get_analog(ANALOG_LEFT_Y) * (DTModifier * FullPower); // keeps the robot straight if there is inconsistantcies with the friction
-		rot = (Cont.get_analog(ANALOG_RIGHT_X) * (0.75  * FullPower)) * (DTModifier * FullPower); // turning is already fast enough
+		
+		dir = Cont.get_analog(ANALOG_LEFT_Y);
+		rot = (Cont.get_analog(ANALOG_RIGHT_X) * TModifier);
 		
 		left = dir + rot;
 		right = dir - rot;
@@ -156,8 +144,8 @@ void opcontrol() {
 		
 											/*			Battery Optimizing			*/
 		lastdir = dir; // trust me bro
-		pros::delay(250 * SpeedReduction);
-		// High = 0 , Middle = 250 , Low = 500
+		pros::delay(50 * SpeedReduction);
+		//0, 50, 100
 
 
 		

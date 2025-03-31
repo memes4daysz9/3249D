@@ -29,6 +29,7 @@ extern const double TrackLength;
 extern const double Tolerance;
 extern const double radius;
 extern double DHeading;
+extern double Distance;
 
 extern int8_t ControllerBatt;
 
