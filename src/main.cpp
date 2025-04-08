@@ -36,6 +36,7 @@ void BatteryChecker(){
 void disabled() {
 	pros::screen::print(pros::E_TEXT_SMALL, 3, "											");
 	BatteryChecker();
+	pros::Task suspend(Odometry); //holds off the task until needed
 	
 	pros::screen::print(pros::E_TEXT_SMALL, 3, "Leaving Disabled Period!");
 	
@@ -54,22 +55,30 @@ bool Move(float dis){ /*			Forward			*/
 	pros::Motor MR(MRP);
 	pros::MotorGroup LeftMG({FLP, MLP, BLP});
 	pros::MotorGroup RightMG({FRP,MRP,BRP});
-
+	Distance = 0;
+	const int MinP = 650;
 	
 	float i;
-	float Target = InchesToDegrees(dis) + ML.get_position();
-	float error = Target - ML.get_position();
+	float Target = InchesToDegrees(dis);
+	float error = Target - InchesToDegrees(Distance);
 	float LError;
 	while (abs(error) > InchesToDegrees(Tolerance)){
 
-		error = Target - ML.get_position();
-		i = (i+error) * kI;
-		LeftMG.move_voltage((error * kP)+ i + ((error - LError) * kD));
-		RightMG.move_voltage((error * kP)+ i + ((error - LError) * kD));
-		pros::delay(10 * SpeedReduction);
+		error = Target - InchesToDegrees(Distance);
+		pros::screen::print(pros::E_TEXT_SMALL, 8, "Error %f" , error);
+		pros::screen::print(pros::E_TEXT_SMALL,9, "sgn %d" , sgn(error));
+		pros::screen::print(pros::E_TEXT_SMALL,10, "T %d" , int(MinP * sgn(error)));
+		i = (i + error) * kI;
+		LeftMG.move_voltage((error * kP) + i + ((error - LError) * kD) + int(MinP * sgn(error)));
+		RightMG.move_voltage((error * kP) + i + ((error - LError) * kD) + int(MinP * sgn(error)));
 		LError = error;
 		
 	}
+	LeftMG.set_brake_mode(pros::MotorBrake::brake);
+	RightMG.set_brake_mode(pros::MotorBrake::brake);	
+	LeftMG.brake();
+	RightMG.brake();
+	pros::delay(300); // allow motors to rest
 	return true;
 }
 
@@ -87,22 +96,44 @@ bool Rotate(float deg){ /*			Rotation			*/
 
 		LeftMG.move_voltage((error * kP)+ i + ((error - LError) * kD));
 		RightMG.move_voltage(((error * kP)+ i + ((error - LError) * kD)) * -1);
-		pros::delay(10 * SpeedReduction);
 		LError = error;
 	}
+	LeftMG.set_brake_mode(pros::MotorBrake::hold);
+	RightMG.set_brake_mode(pros::MotorBrake::hold);	
+	LeftMG.brake();
+	RightMG.brake();
+	pros::delay(300); // allow motors to rest
+	return true;
 
 }
 
 
 void autonomous() {
+	pros::MotorGroup LeftMG({FLP, MLP, BLP});
+	pros::MotorGroup RightMG({FRP,MRP,BRP});
+
 	pros::screen::print(pros::E_TEXT_SMALL, 3, "											");
 	pros::screen::print(pros::E_TEXT_SMALL, 3, "Entering Autonomus Period");
 	pros::Task Odom(Odometry);
+	pros::delay(50);
+	Move(5);
+	Move(-5);
+	Move(10);
+	Move(-10);
+	Move(20);
+	Move(-20);
+	pros::Task suspend(Odometry); //holds off the task until needed
+	pros::Task remove(Odometry); // removes task, since X Y and Heading are all global variables, itll pass on to the next time odometry gets called
+	LeftMG.set_brake_mode(pros::MotorBrake::coast);
+	RightMG.set_brake_mode(pros::MotorBrake::coast);	
 }
 
 void opcontrol() {
 	pros::Task Odom(Odometry);
-	BatteryChecker();
+
+	if (SpeedReduction == 0){ // if disabled() diddnt run OR if its at full power, check again after auton
+		BatteryChecker();
+	}
 	//uncomment for testing
 
 	float dir;
@@ -118,7 +149,7 @@ void opcontrol() {
 	float eRight; 
 	float pLeft;
 	float pRight;
-	const float TModifier = 0.9; // turning modifier
+	const float TModifier = 0.8; // turning modifier
 	bool FullPower; //Overrides the acceleration control and the DT Modifier
 
 	pros::Controller Cont(pros::E_CONTROLLER_MASTER);
@@ -133,7 +164,10 @@ void opcontrol() {
 		
 		dir = Cont.get_analog(ANALOG_LEFT_Y);
 		rot = (Cont.get_analog(ANALOG_RIGHT_X) * TModifier);
-		
+		//pros::screen::print(pros::E_TEXT_SMALL, 2, "forward: %f", dir);
+		if (dir < 10){
+			rot = rot/TModifier; //removing multiplier
+		}
 		left = dir + rot;
 		right = dir - rot;
 
@@ -143,9 +177,9 @@ void opcontrol() {
 
 		
 											/*			Battery Optimizing			*/
-		lastdir = dir; // trust me bro
-		pros::delay(50 * SpeedReduction);
-		//0, 50, 100
+		//lastdir = dir; // trust me bro
+		pros::delay((50 * SpeedReduction) + 5);
+		//5, 55, 105
 
 
 		

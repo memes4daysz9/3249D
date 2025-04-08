@@ -22,16 +22,24 @@ extern double Y = 0; // Local X , Y
 extern constexpr double diameter = 3.25;
 extern constexpr double radius = 3.25/2;
 extern constexpr double TrackLength = 12;
-extern constexpr double Tolerance = 0.1; // 0.1 inches and 0.1 degrees
+extern constexpr double Tolerance = 0.3; // 0.3 inches and 0.3 degrees
 extern double DHeading = 0; // Heading in Degrees
-extern const double kP = 10;
+
+
+extern const double kP = 21;
 extern const double kI = 0.7;
-extern const double kD = 3;
+extern const double kD = 35;
+
+
+
 extern double Distance = 0; // PID Variable, helps with forward PIDs
 
 extern double InchesToDegrees(float distance){return distance/((M_PI * diameter)/360);}
 
-extern double RotationToDegrees(double degrees){return (((degrees * (M_PI / 180))*(TrackLength/2))/diameter*360)/2;}
+extern double RotationToDegrees(double degrees){return ((
+    (degrees * (M_PI / 180))
+    *(TrackLength/2))/
+    diameter*360)/2;}
 
 
 extern double DegToRad(double x) {
@@ -41,7 +49,7 @@ extern double RadToDeg(double x) {
     return (x* (180/M_PI));
 }
 
-extern int sgn(double x){return (x>0) - (x<0);}
+extern int sgn(double x){return ((x>0) - (x<0));}
 
 /*              Battery Saving Functions                */
 

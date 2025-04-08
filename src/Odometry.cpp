@@ -70,7 +70,8 @@ void Odometry(){
         LastH = Heading;
         LastL = LDeg;
         LastR = RDeg;
-
+        pros::delay(1);
+        
         pros::screen::print(pros::E_TEXT_SMALL, 4, "X = %f" , X);
         pros::screen::print(pros::E_TEXT_SMALL, 5, "Y = %f" , Y);
         pros::screen::print(pros::E_TEXT_SMALL, 6, "Heading = %f" , DHeading);
